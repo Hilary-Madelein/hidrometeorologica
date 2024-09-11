@@ -12,6 +12,17 @@
     align-items: stretch;  /* Hacemos que ambos se estiren igual en altura */
 }
 
+.custom-container-filtro, .custom-container-medidas {
+    border: 1px solid #F4F4F4;
+    background-color: #F4F4F4;
+    border-radius: 0.2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
 .h-100 {
     height: 100%;
     display: flex;

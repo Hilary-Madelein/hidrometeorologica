@@ -1,6 +1,6 @@
 import React from 'react';
-import logoIcon from '../img/logoMH.png'; // Ajusta la ruta según la ubicación de tu logo
-import '../css/BarraMenu_Style.css'; // Asegúrate de importar el archivo de estilos correctamente
+import logoIcon from '../img/logoMH.png'; 
+import '../css/BarraMenu_Style.css'; 
 
 const BarraMenu = () => {
     return (

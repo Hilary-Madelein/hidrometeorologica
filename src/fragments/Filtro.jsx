@@ -38,7 +38,7 @@ function Filtro() {
                         </label>
                     </div>
                     <input
-                        type="datetime-local"
+                        type="date"
                         className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
                         style={{ height: '48px' }}
                     />
@@ -57,7 +57,7 @@ function Filtro() {
                         </label>
                     </div>
                     <input
-                        type="datetime-local"
+                        type="date"
                         className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
                         style={{ height: '48px' }}
                     />

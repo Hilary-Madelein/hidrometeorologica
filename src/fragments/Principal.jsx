@@ -4,8 +4,8 @@ import Mapa from './Mapa';
 import CardEstaciones from './CardEstaciones';
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../css/Principal_Style.css';
-import '../css/Filtro_Style.css';
 import Filtro from './Filtro';
+import Medidas from './Medidas';
 
 function Principal() {
     return (
@@ -35,11 +35,13 @@ function Principal() {
                 </div>
                 <div className="row align-items-stretch">
                     <div className="col-lg-12 col-md-12 mb-4" >
-                        <div className="h-100 custom-container-medidas d-flex flex-column" style={{ height: 'auto' }}>
-                            
+                        <div className="custom-container-medidas d-flex flex-column" style={{ height: '350px'}}>
+                            <Medidas />
                         </div>
                     </div>
                 </div>
+
+
             </div>
 
 
