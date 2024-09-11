@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+:root {
+  --white: #ffffff;
+  --blue-unl: #0C2840;
+  --gray: #f2f2f2;
+  --glass: rgba(255, 255, 255, 0.1);
+  --black: #0000;
+  --boxShadow: 0px 19px 60px rgba(0, 0, 0, 0.08);
+  --smboxShadow: -79px 51px 60px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  font-family: 'Poppins', sans-serif !important;
+  box-sizing: border-box; /* Añadido para asegurarnos de que el padding y el borde se incluyan en el ancho y alto */
+}

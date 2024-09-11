@@ -1,0 +1,23 @@
+.custom-container {
+    position: relative;
+    border: 1px solid #ffffff;
+    background-color: #ffffff;
+    border-radius: 0.2rem;
+    padding: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin: 10px auto;
+    min-height: 80vh;  /* Asegura que ambos contenedores tengan la altura mínima */
+    justify-content: space-between;  /* Mantén ambos contenedores alineados horizontalmente */
+    align-items: stretch;  /* Hacemos que ambos se estiren igual en altura */
+}
+
+.h-100 {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+

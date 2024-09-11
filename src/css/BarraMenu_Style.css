@@ -1,0 +1,28 @@
+.custom-navbar {
+    background-color: var(--blue-unl);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.header1 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: var(--blue-unl);
+    position: sticky;
+}
+
+.titulo {
+    color: rgb(255, 255, 255); 
+    font-size: 1.5rem; 
+    display: flex;
+    align-items: center; 
+    font-weight: 700;
+    margin-top: 5px; 
+    
+}  
+
+.navbar-brand img {
+    margin-right: 10px; 
+}

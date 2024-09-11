@@ -1,0 +1,23 @@
+.custom-container-mapa {
+    border: 1px solid #F4F4F4;
+    background-color: #F4F4F4;
+    border-radius: 0.2rem;
+    padding: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;  /* El mapa ocupará todo el alto disponible */
+    min-height: 400px;  /* Establecemos una altura mínima */
+}
+
+@media (max-width: 768px) {
+    .custom-container-mapa {
+        height: 60vh;  /* Proporción adecuada en pantallas pequeñas */
+        min-height: 300px;
+        width: 100%;
+    }
+}
+
+.map-container {
+    width: 100%;
+    height: 100%;
+}
