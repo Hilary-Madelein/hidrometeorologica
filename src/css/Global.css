@@ -14,5 +14,4 @@
 
 * {
   font-family: 'Poppins', sans-serif !important;
-  box-sizing: border-box; /* Añadido para asegurarnos de que el padding y el borde se incluyan en el ancho y alto */
 }

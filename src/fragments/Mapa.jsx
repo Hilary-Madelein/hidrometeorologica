@@ -17,7 +17,6 @@ function Mapa() {
       zoom: 12,
     });
 
-    // Añadir controles de navegación (zoom y rotación)
     mapInstance.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     setMap(mapInstance);

@@ -8,6 +8,21 @@
     min-height: 100px;
 }
 
+.custom-container-filtro button {
+    background-color: #007BFF;
+    border: none;
+    border-radius: 0.3rem;
+    padding: 0.75rem 1.5rem;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.custom-container-filtro button:hover {
+    background-color: #0056b3;
+}
+
 .custom-buton-filtro:hover{
     transform: translateY(-2px); 
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 
