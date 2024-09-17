@@ -15,8 +15,6 @@ export const InicioSesion = async (data) => {
     return datos;
 }
 
-
-
 export const ObtenerGet = async (key, url) => {
     const headers = {
         "Content-Type": "application/json",

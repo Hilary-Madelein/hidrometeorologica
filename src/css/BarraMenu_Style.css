@@ -41,12 +41,19 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Media queries para pantallas pequeñas */
 @media (max-width: 768px) {
+    .navbar-brand {
+        flex-direction: column; /* Coloca el logo y el título en columna (uno debajo del otro) */
+        align-items: center;    /* Centra el contenido en pantallas pequeñas */
+    }
+
     .titulo {
-        font-size: 1.2rem;
+        margin-left: 0;  /* Elimina el margen izquierdo para centrar el título */
+        font-size: 1.25rem; /* Ajusta el tamaño de la fuente en pantallas pequeñas */
     }
 
     .logo {
-        width: 150px;
+        margin-bottom: 10px; /* Añade un margen inferior al logo para separarlo del título */
     }
 }
