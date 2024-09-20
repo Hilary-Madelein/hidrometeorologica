@@ -1,79 +1,165 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import '../css/Principal_Style.css';
 
-function Filtro() {
+function Filtro({ onFiltrar }) {
+    const [filtroSeleccionado, setFiltroSeleccionado] = useState('rangoFechas');  // Estado para controlar el tipo de filtro seleccionado
+    const [mesSeleccionado, setMesSeleccionado] = useState('01');  // Estado para el mes seleccionado
+    const [anioSeleccionado, setAnioSeleccionado] = useState(new Date().getFullYear());  // Estado para el año seleccionado
+    const [fechaInicio, setFechaInicio] = useState('');  // Estado para la fecha de inicio
+    const [fechaFin, setFechaFin] = useState('');  // Estado para la fecha de fin
+
+    const manejarCambioFiltro = (event) => {
+        setFiltroSeleccionado(event.target.value);
+    };
+
+    // Lista de meses
+    const meses = [
+        { valor: '1', nombre: 'Enero' },
+        { valor: '2', nombre: 'Febrero' },
+        { valor: '3', nombre: 'Marzo' },
+        { valor: '4', nombre: 'Abril' },
+        { valor: '5', nombre: 'Mayo' },
+        { valor: '6', nombre: 'Junio' },
+        { valor: '7', nombre: 'Julio' },
+        { valor: '8', nombre: 'Agosto' },
+        { valor: '9', nombre: 'Septiembre' },
+        { valor: '10', nombre: 'Octubre' },
+        { valor: '11', nombre: 'Noviembre' },
+        { valor: '12', nombre: 'Diciembre' },
+    ];
+
+    const anios = Array.from(new Array(100), (val, index) => new Date().getFullYear() - index);
+
+    // Función para manejar el evento del botón de filtrar
+    const manejarFiltrado = () => {
+        const datosFiltro = filtroSeleccionado === 'rangoFechas'
+            ? { tipo: 'rangoFechas', fechaInicio, fechaFin }
+            : { tipo: 'mesAnio', mesSeleccionado, anioSeleccionado }; 
+
+        console.log("Datos del filtro enviados al padre:", datosFiltro);
+
+        console.log("REVISANDOOO", filtroSeleccionado);
+        
+        
+        onFiltrar(datosFiltro);
+    };
 
     return (
         <div className="container d-flex justify-content-between align-items-center py-4">
             <div className="row w-100 align-items-center">
 
-                {/* Selector de Estación */}
-                <div className="col-md-3">
-                    <div className="d-flex align-items-center mb-2" style={{ justifyContent: 'flex-start' }}>
-
-                        <label className="mb-2" htmlFor="fecha-inicio" style={{ fontWeight: 'bold', color: "var(--blue-unl)", marginLeft: '5px' }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pin-map" viewBox="0 0 16 16" style={{ marginRight: '5px', color: "var(--blue-unl)" }}> 
-                                <path fill-rule="evenodd" d="M3.1 11.2a.5.5 0 0 1 .4-.2H6a.5.5 0 0 1 0 1H3.75L1.5 15h13l-2.25-3H10a.5.5 0 0 1 0-1h2.5a.5.5 0 0 1 .4.2l3 4a.5.5 0 0 1-.4.8H.5a.5.5 0 0 1-.4-.8z" />
-                                <path fill-rule="evenodd" d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999z" />
-                            </svg>
-                            Estación:
+                {/* Radio buttons para seleccionar tipo de filtro */}
+                <div className="col-md-12 d-flex justify-content-center mb-4">
+                    <div className="form-check form-check-inline">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="tipoFiltro"
+                            id="rangoFechas"
+                            value="rangoFechas"
+                            checked={filtroSeleccionado === 'rangoFechas'}
+                            onChange={manejarCambioFiltro}
+                        />
+                        <label className="form-check-label" htmlFor="rangoFechas">
+                            Filtrar por rango de fechas
                         </label>
                     </div>
-                    <select className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100" style={{ height: '48px' }}>
-                        <option>Elegir estación</option>
-                        {/* Agrega más opciones si es necesario */}
-                    </select>
-                </div>
-
-                {/* Fecha inicio */}
-                <div className="col-md-3">
-                    <div className="d-flex align-items-center mb-2" style={{ justifyContent: 'flex-start' }}>
-
-                        <label className="mb-2" htmlFor="fecha-inicio" style={{ fontWeight: 'bold', color: "var(--blue-unl)", marginLeft: '5px' }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-calendar-check" viewBox="0 0 16 16" style={{ marginRight: '5px', color: "var(--blue-unl)" }}>
-                                <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
-                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                            </svg>
-                            Fecha inicio:
+                    <div className="form-check form-check-inline">
+                        <input
+                            className="form-check-input"
+                            type="radio"
+                            name="tipoFiltro"
+                            id="mesAnio"
+                            value="mesAnio"
+                            checked={filtroSeleccionado === 'mesAnio'}
+                            onChange={manejarCambioFiltro}
+                        />
+                        <label className="form-check-label" htmlFor="mesAnio">
+                            Filtrar por mes y año
                         </label>
                     </div>
-                    <input
-                        type="date"
-                        className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
-                        style={{ height: '48px' }}
-                    />
                 </div>
 
-                {/* Fecha fin */}
-                <div className="col-md-3">
-                    <div className="d-flex align-items-center mb-2" style={{ justifyContent: 'flex-start' }}>
+                {/* Dependiendo del filtro seleccionado, mostramos los inputs correspondientes */}
+                {filtroSeleccionado === 'rangoFechas' ? (
+                    <>
+                        {/* Fecha inicio */}
+                        <div className="col-md-4">
+                            <label className="mb-2" htmlFor="fecha-inicio" style={{ fontWeight: 'bold', color: "var(--blue-unl)", marginLeft: '5px' }}>
+                                Fecha inicio:
+                            </label>
+                            <input
+                                type="date"
+                                className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
+                                style={{ height: '48px' }}
+                                value={fechaInicio}
+                                onChange={(e) => setFechaInicio(e.target.value)}
+                            />
+                        </div>
 
-                        <label className="mb-2" htmlFor="fecha-fin" style={{ fontWeight: 'bold', color: "var(--blue-unl)", marginLeft: '5px' }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-calendar-check" viewBox="0 0 16 16" style={{ marginRight: '5px', color: "var(--blue-unl)" }}>
-                                <path d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0" />
-                                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                            </svg>
-                            Fecha fin:
-                        </label>
-                    </div>
-                    <input
-                        type="date"
-                        className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
-                        style={{ height: '48px' }}
-                    />
-                </div>
+                        {/* Fecha fin */}
+                        <div className="col-md-4">
+                            <label className="mb-2" htmlFor="fecha-fin" style={{ fontWeight: 'bold', color: "var(--blue-unl)", marginLeft: '5px' }}>
+                                Fecha fin:
+                            </label>
+                            <input
+                                type="date"
+                                className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
+                                style={{ height: '48px' }}
+                                value={fechaFin}
+                                onChange={(e) => setFechaFin(e.target.value)}
+                            />
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {/* Selección de Mes */}
+                        <div className="col-md-4">
+                            <label className="mb-2" htmlFor="mes" style={{ fontWeight: 'bold', color: "var(--blue-unl)", marginLeft: '5px' }} >
+                                Mes:
+                            </label>
+                            <select
+                                className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
+                                style={{ height: '48px' }}
+                                value={mesSeleccionado}
+                                onChange={(e) => setMesSeleccionado(e.target.value)}
+                            >
+                                {meses.map((mes) => (
+                                    <option key={mes.valor} value={mes.valor}>{mes.nombre}</option>
+                                ))}
+                            </select>
+                        </div>
 
+                        {/* Selección de Año */}
+                        <div className="col-md-4">
+                            <label className="mb-2" htmlFor="anio" style={{ fontWeight: 'bold', color: "var(--blue-unl)", marginLeft: '5px' }}>
+                                Año:
+                            </label>
+                            <select
+                                className="h-10 rounded-md border border-input px-3 py-2 text-sm w-100"
+                                style={{ height: '48px' }}
+                                value={anioSeleccionado}
+                                onChange={(e) => setAnioSeleccionado(e.target.value)}
+                            >
+                                {anios.map((anio) => (
+                                    <option key={anio} value={anio}>{anio}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </>
+                )}
 
                 {/* Botón de Filtrar */}
-                <div className="col-md-3 d-flex justify-content-end">
-                    <button type="button" className="btn btn-primary custom-buton-filtro w-100 h-10 rounded" style={{ height: '48px', marginTop: '40px', backgroundColor: "var(--blue-unl)", border: 'none', fontWeight:'bold' }}>
+                <div className="col-md-4 d-flex justify-content-end">
+                    <button type="button" className="btn btn-primary custom-buton-filtro w-100 h-10 rounded" style={{ height: '48px', marginTop: '40px', backgroundColor: "var(--blue-unl)", border: 'none', fontWeight: 'bold' }}
+                        onClick={manejarFiltrado} 
+                    >
                         Filtrar datos
                     </button>
                 </div>
 
             </div>
         </div>
-
     );
 }
 

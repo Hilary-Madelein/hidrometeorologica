@@ -45,21 +45,20 @@
     background: linear-gradient(to right, #7a8b9e, #0C2840); 
 }
 
-.modern-card {
-    background-color: #fff;
-    border-radius: 15px; 
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
 .modern-card:hover {
     transform: translateY(-5px); 
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2); 
 }
 
 .modern-card img {
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-radius: 10px;
+}
+
+modern-card .card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Hace que la imagen cubra toda la card sin distorsión */
+    border-radius: 8px 8px 0 0; /* Hace que las esquinas superiores de la imagen sean redondeadas */
 }
 
 .modern-card .card-body {
@@ -68,20 +67,31 @@
 }
 
 .modern-card .card-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
+    word-wrap: break-word; /* Permite que las palabras largas se dividan en varias líneas */
+    text-overflow: ellipsis; /* Agrega '...' si el texto es demasiado largo */
+    white-space: normal; /* Permite el salto de línea si es necesario */
+    overflow: hidden; /* Evita que el texto se desborde del contenedor */
 }
 
 .modern-card .card-text {
     font-size: 0.9rem;
-    color: #555;
+    word-wrap: break-word; /* Permite que las palabras largas se dividan en varias líneas */
+    text-overflow: ellipsis; /* Agrega '...' si el texto es demasiado largo */
+    white-space: normal; /* Permite el salto de línea si es necesario */
+    overflow: hidden; /* Evita que el texto se desborde del contenedor */
 }
 
-@media (max-width: 768px) {
-    .modern-card {
-        max-width: 100%; 
-        margin-bottom: 20px;
-    }
+/* Establecer un tamaño máximo de las cards para evitar el desbordamiento del contenido */
+.modern-card {
+    max-width: 100%; /* Asegura que la tarjeta no sea más ancha que su contenedor */
+    height: auto;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
 }
 
 /* Estaciones Meteorológicas */
@@ -128,6 +138,118 @@
 
 .tab-button:hover {
     background-color: #eaefff; 
+}
+
+.zonas-monitoreo-titulo {
+    background-color: #0C2840;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    color: white;
+}
+
+.zonas-monitoreo-titulo h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.btn-back {
+    background-color: #0C2840;
+    border-radius: 50%;
+    padding: 10px;
+    color: white;
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.btn-back span {
+    margin: 0;
+    padding: 0;
+}
+
+@media (max-width: 1200px) {
+    .zonas-monitoreo-titulo h2 {
+        font-size: 18px;
+    }
+
+    .card-custom h5 {
+        font-size: 10px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-custom h5 {
+        font-size: 14px;
+    }
+
+    .card-custom p {
+        font-size: 12px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .zonas-monitoreo-titulo h2 {
+        font-size: 20px;
+    }
+
+    .modern-card .card-title {
+        font-size: 0.9rem;
+    }
+
+    .modern-card .card-text {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .col-md-4, .col-sm-6 {
+        width: 100%;
+    }
+
+    .card-custom h5 {
+        font-size: 12px;
+    }
+
+    .card-custom p {
+        font-size: 10px;
+    }
+
+    .btn {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+
+    .zonas-monitoreo-titulo h2 {
+        font-size: 18px;
+    }
+
+    .modern-card .card-title {
+        font-size: 0.85rem;
+    }
+
+    .modern-card .card-text {
+        font-size: 0.75rem;
+    }
 }
 
 
