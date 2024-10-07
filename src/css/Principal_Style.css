@@ -4,7 +4,6 @@
     background-color: #ffffff;
     border-radius: 0.2rem;
     padding: 2rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
     margin: 10px auto;
     min-height: 80vh;
@@ -17,21 +16,18 @@
 .custom-container-medidas,
 .custom-container-filtro,
 .custom-container-graficas {
-    border: 1px solid #F7F9FC;
-    background-color: #F7F9FC;
-    border-radius: 0.2rem;
+    border: 1px solid #f9f9fc;
+    background-color: #f9f9fc;
+    border-radius: 0.3rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
     padding: 0;
     margin: 0;
 }
 
-.custom-container-medidas {
-    height: 250px; /* Ajustar la altura del contenedor de medidas */
-}
-
 .row.align-items-stretch.mb-4 {
-    margin-bottom: 0 !important; /* Reducir espacio vertical entre las filas */
+    margin-bottom: 0 !important;
+    /* Reducir espacio vertical entre las filas */
 }
 
 .h-100 {
@@ -42,19 +38,24 @@
 }
 
 .footer-gradient {
-    background: linear-gradient(135deg, #0C2840, #445569);
+    background: linear-gradient(135deg, #57687c, #0C2840);
     color: #fff;
 }
 
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
+
+.logo-cis {
+    width: 600px;
 }
 
-.footer-item {
-    font-weight: 500;
-}
+.footer-content {
+    padding: 10px; /* Reduce el padding para disminuir el tamaño vertical */
+  }
+  
+  footer {
+    padding: 0; /* Elimina cualquier padding adicional en el footer */
+    margin: 0;  /* Elimina cualquier margen adicional en el footer */
+    height: auto; /* Ajusta la altura automáticamente al contenido */
+  }
 
 /* Responsivo */
 @media (max-width: 768px) {
@@ -73,5 +74,9 @@
 
     .footer-item:last-child {
         margin-bottom: 0;
+    }
+
+    .logo-cis {
+        width: 300px;
     }
 }

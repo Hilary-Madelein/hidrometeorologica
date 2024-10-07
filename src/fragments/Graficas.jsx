@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, Title, Tooltip, Legend, PointElement } from 'chart.js';
 import * as XLSX from 'xlsx';  // Para exportar a Excel
@@ -11,7 +11,7 @@ import Spinner from 'react-bootstrap/Spinner';  // Librería de Bootstrap para m
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
 
-const chartColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+const chartColors = ['#362FD9', '#1AACAC', '#DB005B', '#19A7CE', '#DF2E38', '#8DCBE6'];
 
 function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principal
   const [datosGrafica, setDatosGrafica] = useState([]);  // Estado para los datos que vienen del backend
@@ -30,8 +30,6 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
       try {
         let body;
         let url;
-
-        console.log("Filtro trabajando", filtro.tipo);
 
         // Caso para "mesAnio"
         if (filtro.tipo === "mesAnio") {
@@ -90,20 +88,17 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
     fetchData();
   }, [filtro, navigate]);
 
-  // Obtener las medidas disponibles (Temperatura, Humedad, etc.) de los datos
   const medidasDisponibles = datosGrafica.length > 0 ? Object.keys(datosGrafica[0].medidas) : [];
 
-  // Preparar datos para mostrar en gráficas
   const prepararDatosPorMedida = (medida, colorIndex) => {
     let labels;
 
-    // Verificamos si el filtro es mensual, por rango de fechas o escala de tiempo
     if (filtro.tipo === "mensual") {
       labels = datosGrafica.map(item => item.mes);  // Para datos mensuales
     } else if (filtro.tipo === "rangoFechas" || filtro.tipo === "mesAnio") {
-      labels = datosGrafica.map(item => item.dia);  // Para rango de fechas o mes y año
+      labels = datosGrafica.map(item => item.dia);  
     } else {
-      labels = datosGrafica.map(item => item.hora);  // Para datos por hora o escala de tiempo
+      labels = datosGrafica.map(item => item.hora); 
     }
 
     return {
@@ -163,34 +158,6 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
     XLSX.writeFile(workbook, `${medida}.xlsx`);
   };
 
-
-  // Función para generar el mensaje del periodo de tiempo
-  const generarMensajePeriodo = () => {
-    if (!filtro) return '';
-
-    if (filtro.tipo === 'mesAnio') {
-      const mes = new Date(0, filtro.mesSeleccionado - 1).toLocaleString('es-ES', { month: 'long' });
-      return `Periodo de tiempo: ${mes} ${filtro.anioSeleccionado}`;
-    } else if (filtro.tipo === 'rangoFechas') {
-      const fechaInicio = new Date(filtro.fechaInicio).toLocaleDateString('es-ES');
-      const fechaFin = new Date(filtro.fechaFin).toLocaleDateString('es-ES');
-      return `Periodo de tiempo: Desde ${fechaInicio} hasta ${fechaFin}`;
-    } else if (filtro.tipo === 'mensual') {
-      return `Datos mensuales seleccionados`;
-    } else if (["15min", "30min", "hora", "diaria"].includes(filtro.tipo)) {
-      const fecha = new Date(filtro.fechaInicio || new Date()).toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-      });
-      return `Datos desde ${fecha}`;
-    }
-
-    return '';
-  };
-
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh', flexDirection: 'column' }}>
@@ -203,23 +170,7 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
   }
 
   return (
-    <div className="container-fluid">
-      <div className="info bg-white p-4 rounded shadow-sm" style={{ marginBottom: 15 }}>
-        <div className="d-flex justify-content-start align-items-center mb-2">
-          <i className="fas fa-info-circle text-primary mr-2" style={{ fontSize: '1.5rem' }}></i>
-          <h4 className="m-0 text-dark">Información presentada:</h4>
-        </div>
-
-        {filtro && (
-          <>
-            <div className="d-flex flex-column flex-md-row justify-content-start align-items-md-center mb-2">
-              <div className="mr-3">
-                <span className="font-weight-bold text-dark">{generarMensajePeriodo()}</span>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+    <div className="container-fluid" custom-container-graficas>
 
       <div className="row">
         {medidasDisponibles.map((medida, index) => (
@@ -227,7 +178,7 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
             <div style={{
               padding: '20px',
               border: '1px solid #ffffff',
-              borderRadius: '10px',
+              borderRadius: '8px',
               boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
               background: '#ffffff',
             }}>

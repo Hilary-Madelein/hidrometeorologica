@@ -1,15 +1,6 @@
-.custom-container-filtro {
-    border: 1px solid #F4F4F4;
-    background-color: #F4F4F4;
-    border-radius: 0.2rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    height: 100%;
-    min-height: 100px;
-}
 
 .custom-container-filtro button {
-    background-color: #007BFF;
+    background-color: #537EC5;
     border: none;
     border-radius: 0.3rem;
     padding: 0.75rem 1.5rem;
@@ -19,12 +10,14 @@
     transition: all 0.3s ease;
 }
 
-.custom-container-filtro button:hover {
-    background-color: #0056b3;
+.custom-button-filtro{
+    background-color: #537EC5;
 }
 
-.custom-buton-filtro:hover{
-    transform: translateY(-2px); 
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2), 
-                0 15px 50px rgba(0, 0, 0, 0.2); 
+.custom-container-filtro button:hover {
+    background-color: #BBE1FA;
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2),
+                0 15px 50px rgba(0, 0, 0, 0.2);
 }

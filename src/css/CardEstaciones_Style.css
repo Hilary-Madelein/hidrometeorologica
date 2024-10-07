@@ -20,30 +20,6 @@
     padding: 10px; 
 }
 
-.progress-container {
-    width: 100%;
-    text-align: center;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.modern-progress-bar {
-    width: 70%;
-    height: 5px; 
-    background-color: #e0e0e0; 
-    overflow: hidden;
-    margin-bottom: 15px;
-    position: relative;
-}
-
-.modern-progress-bar .progress-bar {
-    height: 100%;
-    border-radius: 20px; 
-    background: linear-gradient(to right, #7a8b9e, #0C2840); 
-}
 
 .modern-card:hover {
     transform: translateY(-5px); 

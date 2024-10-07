@@ -1,117 +1,175 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { borrarSesion, getToken } from '../utils/SessionUtil';
+import mensajes from '../utils/Mensajes';
+import { ObtenerPost } from '../hooks/Conexion';
 import '../css/Medidas_Style.css';
+import Spinner from 'react-bootstrap/Spinner';
 import temperaturaIcon from '../img/temperatura.png';
 import presionIcon from '../img/presion.png';
 import lluviaIcon from '../img/lluvia.png';
-import nivelAguaIcon from '../img/nivelAgua.png';
 import humedadIcon from '../img/humedad.png';
-import { ObtenerGet } from '../hooks/Conexion';
-import mensajes from '../utils/Mensajes';
 
-const variableConfig = [
-    { nombre: 'Temperatura', color: '#FF6384', icono: temperaturaIcon },
-    { nombre: 'Lluvia diaria', color: '#FFCE56', icono: lluviaIcon },
-    { nombre: 'Humedad Relativa', color: '#36A2EB', icono: humedadIcon },
-    { nombre: 'Nivel de Agua', color: '#4BC0C0', icono: nivelAguaIcon },
-    { nombre: 'Presión atmosférica', color: '#9966FF', icono: presionIcon },
-];
+const chartColors = ['#362FD9', '#1AACAC', '#DB005B', '#19A7CE', '#DF2E38', '#8DCBE6'];
 
-function MedidasDinamicas() {
-    const [variables, setVariables] = useState([]);  // Inicializamos con un array vacío
-    const [loading, setLoading] = useState(true);    // Indicador de carga
-    const [progress, setProgress] = useState(0);     // Estado de la barra de progreso
+function MedidasDinamicas({ filtro }) {
+    const [variables, setVariables] = useState([]);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
-    const esMedidaValida = (clave, valor) => {
-        const propiedadesExcluidas = ["Fecha_local_UTC-5", "deviceId", "id", "_rid", "_self", "_etag", "_attachments", "_ts"];
-        return typeof valor === 'number' && !propiedadesExcluidas.includes(clave);
-    };
-
-    const extraerMedidas = (info) => {
-        return Object.keys(info)
-            .filter(clave => esMedidaValida(clave, info[clave]))
-            .map(clave => ({
-                nombre: clave,
-                valor: info[clave]
-            }));
-    };
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                setProgress(0);  // Reinicia la barra de progreso
-                const interval = setInterval(() => {
-                    setProgress((prev) => (prev < 80 ? prev + 10 : prev));  // Aumenta el progreso
-                }, 200);
+            if (!filtro || (!filtro.fechaInicio && !filtro.mesSeleccionado && !filtro.tipo)) {
+                setVariables([]);
+                return;
+            }
 
-                const info = await ObtenerGet(getToken(), '/listar/ultimaMedida');
+            setLoading(true);
+            const body = {};
+
+            try {
+                if (filtro.tipo === "15min" || filtro.tipo === "30min" || filtro.tipo === "diaria" || filtro.tipo === "hora") {
+                    body.escalaDeTiempo = filtro.tipo;
+                } else if (filtro.tipo === "mesAnio") {
+                    body.mes = filtro.mesSeleccionado;
+                    body.anio = filtro.anioSeleccionado;
+                } else if (filtro.tipo === "rangoFechas") {
+                    body.fechaInicio = new Date(filtro.fechaInicio).toISOString();
+                    body.fechaFin = new Date(filtro.fechaFin).toISOString();
+                }
+
+                const url = '/listar/medidas/escala';
+                const info = await ObtenerPost(getToken(), url, body);
+
                 if (info.code !== 200) {
+                    setVariables([]);
+                    mensajes(info.msg, 'info');
                     if (info.msg === 'Acceso denegado. Token ha expirado') {
-                        mensajes(info.msg, 'error');
                         borrarSesion();
                         navigate("/login");
-                    } else {
-                        mensajes(info.msg, 'error');
                     }
                 } else {
                     const medidas = extraerMedidas(info.info);
-                    console.log("Medidas extraídas:", medidas);
                     setVariables(medidas);
                 }
-                clearInterval(interval);
-                setProgress(100);  // Completa el progreso cuando los datos se obtienen correctamente
             } catch (error) {
-                mensajes("Error al cargar los datos: " + error.message, 'error');
+                setVariables([]);
+                mensajes(error.message, 'info');
             } finally {
-                setLoading(false);  // Detenemos el indicador de carga
+                setLoading(false); 
             }
         };
 
         fetchData();
-    }, [navigate]);
+    }, [filtro, navigate]);
 
-    const renderProgressBar = () => (
-        <div className="progress-container">
-            <div className="modern-progress-bar">
-                <div
-                    className={`progress-bar progress-bar-striped progress-bar-animated bg-info`} // Puedes cambiar el color según prefieras
-                    role="progressbar"
-                    style={{ width: `${progress}%` }}
-                    aria-valuenow={progress}
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                ></div>
-            </div>
-            <p>Cargando datos...</p>
-        </div>
-    );
+    const extraerMedidas = (info) => {
+        return [
+            {
+                nombre: "Temperatura",
+                valor: `Promedio: ${info.promedioTemperatura.toFixed(2)} °C\nMáx: ${info.maxTemperatura.toFixed(2)} °C\nMín: ${info.minTemperatura.toFixed(2)} °C`,
+                icono: temperaturaIcon,
+                unidad: "°C",
+                color: chartColors[0],
+            },
+            {
+                nombre: "Humedad",
+                valor: `Promedio: ${info.promedioHumedad.toFixed(2)} %`,
+                icono: humedadIcon,
+                unidad: "%",
+                color: chartColors[1],
+            },
+            {
+                nombre: "Presión",
+                valor: `Promedio: ${info.promedioPresion.toFixed(2)} hPa`,
+                icono: presionIcon,
+                unidad: "hPa",
+                color: chartColors[2],
+            },
+            {
+                nombre: "Lluvia",
+                valor: `Suma: ${info.sumaLluvia.toFixed(2)} mm`,
+                icono: lluviaIcon,
+                unidad: "mm",
+                color: chartColors[3],
+            },
+        ];
+    };
+
+    const generarMensajePeriodo = () => {
+        if (!filtro) return '';
+
+        if (filtro.tipo === 'mesAnio') {
+            const mes = new Date(0, filtro.mesSeleccionado - 1).toLocaleString('es-ES', { month: 'long' });
+            return `Periodo de tiempo: ${mes} ${filtro.anioSeleccionado}`;
+        } else if (filtro.tipo === 'rangoFechas') {
+            const fechaInicio = new Date(filtro.fechaInicio).toLocaleDateString('es-ES');
+            const fechaFin = new Date(filtro.fechaFin).toLocaleDateString('es-ES');
+            return `Periodo de tiempo: Desde ${fechaInicio} hasta ${fechaFin}`;
+        } else if (filtro.tipo === 'mensual') {
+            return `Datos de todos los meses`;
+        } else if (["15min", "30min", "hora", "diaria"].includes(filtro.tipo)) {
+            const fecha = new Date(filtro.fechaInicio || new Date()).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric'
+            });
+            return `Datos desde ${fecha}`;
+        }
+
+        return '';
+    };
 
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-                {renderProgressBar()}
+                <Spinner animation="border" role="status" style={{ width: '3rem', height: '3rem', margin:'10px' }}>
+                    <span className="sr-only"></span>
+                </Spinner>
+                <p className="mt-3">Cargando datos...</p>
             </div>
         );
     }
 
     return (
-        <div className="container-fluid">
-            <div className="row mb-4">
-                <div className="col text-left">
-                    <h2 className="titulo-variables">Variables Hidrometeorológicas</h2>
+        <div className="container-fluid custom-container-medidas">
+            <div className="info bg-white p-4 rounded shadow-sm" style={{ marginBottom: 20, borderColor:'#f1f1f1' }}>
+                <div className="d-flex justify-content-start align-items-center mb-2">
+                    <i className="fas fa-info-circle text-primary mr-2" style={{ fontSize: '1.5rem' }}></i>
+                    <h4 className="m-0 text-dark" style={{ fontWeight: '700', color: '#0C2840' }}>
+                        Información presentada:
+                    </h4>
                 </div>
+
+                {filtro && (
+                    <div className="d-flex flex-column flex-md-row justify-content-start align-items-md-center mb-2">
+                        <div className="mr-3">
+                            <span className="font-weight-bold text-dark">{generarMensajePeriodo()}</span>
+                        </div>
+                    </div>
+                )}
             </div>
-            <div className="row mb-4 justify-content-center"> {/* Centrado automático cuando hay pocas tarjetas */}
+            <div className="row mb-4 justify-content-center">
                 {variables.map((variable, index) => (
-                    <div key={index} className="col-lg-3 col-md-4 col-sm-6 col-6 mb-4 d-flex align-items-stretch justify-content-center">
-                        <div className="card text-center p-3 shadow-sm w-100" style={{ minWidth: '150px', maxWidth: '300px' }}>
-                            <img src={variable.icono || humedadIcon} alt={`${variable.nombre} Icono`} className="img-fluid mx-auto mb-3" />
-                            <h5 className="mb-2 variable-title"><strong>{variable.nombre}</strong></h5>
-                            <h3 className="mb-0 variable-value" style={{ color: variable.color || '#000' }}>
-                                {variable.valor}
-                            </h3>
+                    <div key={index} className="col-lg-3 col-md-4 col-sm-6 col-12 mb-4 d-flex align-items-stretch">
+                        <div
+                            className="card custom-card p-3 shadow-sm w-100 d-flex justify-content-start align-items-center"
+                            style={{ border: `3px solid ${variable.color}`, height: '260px' }} // Ajustar la altura aquí
+                        >
+                            <img src={variable.icono} alt={`${variable.nombre} Icono`} className="icono-variable" style={{ width: '80px', height: '80px' }} />
+                            <div className="text-left ml-3 d-flex flex-column justify-content-center" style={{ flex: 1 }}>
+                                <h5 className="variable-title"><strong>{variable.nombre}</strong></h5>
+                                <p className="mb-0" style={{ fontSize: '14px', color: '#787A91' }}><strong>Medida: </strong>{variable.unidad}</p>
+                            </div>
+                            <div className="valor-variable mt-3 text-right" style={{ flex: 1 }}>
+                                {variable.nombre === "Temperatura" ? (
+                                    <pre className="variable-value" style={{ whiteSpace: "pre-wrap", fontSize: '16px' }}>{variable.valor}</pre>
+                                ) : (
+                                    <h3 className="variable-value" style={{ fontSize: '18px' }}>{variable.valor}</h3>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}

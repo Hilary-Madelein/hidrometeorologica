@@ -26,7 +26,7 @@ function Mapa() {
   }, []);
 
   return (
-    <div className="map-container" ref={mapContainerRef} />  // Añadimos clases para manejar el tamaño
+    <div className="map-container custom-container-mapa" ref={mapContainerRef} />  // Añadimos clases para manejar el tamaño
   );
 }
 
