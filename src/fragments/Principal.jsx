@@ -4,7 +4,7 @@ import Mapa from './Mapa';
 import CardEstaciones from './CardEstaciones';
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../css/Principal_Style.css';
-import Medidas from './Medidas'; // Importa MedidasDinamicas en lugar de Medidas
+import Medidas from './Medidas';
 import Graficas from './Graficas';
 import Filtro from './Filtro';
 import LogoCIS from '../img/LOGO_CIS.png'

@@ -1,5 +1,5 @@
 
-.custom-container-filtro button {
+.custom-button-filtro {
     background-color: #537EC5;
     border: none;
     border-radius: 0.3rem;
@@ -9,12 +9,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
-.custom-button-filtro{
-    background-color: #537EC5;
-}
-
-.custom-container-filtro button:hover {
+.custom-button-filtro:hover {
     background-color: #BBE1FA;
     color: black;
     transform: translateY(-2px);
