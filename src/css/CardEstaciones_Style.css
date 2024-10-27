@@ -146,25 +146,21 @@
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para darle profundidad */
-    z-index: 10; /* Asegura que esté sobre otros elementos */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); 
+    z-index: 10; 
 }
 
-/* Efecto de hover para el botón */
 .btn-back:hover {
-    background-color: #93b7fa; /* Cambia el color de fondo en hover */
-    transform: scale(1.1); /* Aumenta el tamaño ligeramente en hover */
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); /* Incrementa la sombra en hover */
+    background-color: #93b7fa; 
+    transform: scale(1.1); 
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); 
 }
 
-/* Efecto activo cuando se presiona el botón */
 .btn-back:active {
-    transform: scale(0.95); /* Reduce el tamaño ligeramente cuando se presiona */
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); /* Reduce la sombra cuando se presiona */
+    transform: scale(0.95); 
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-
-/* Estilos para los botones de sección (estilo de carpeta extendida a todo el ancho) */
 .section-tabs {
     display: flex;
     justify-content: space-between;
@@ -174,7 +170,7 @@
 }
 
 .tab-button {
-    flex: 1; /* Cada botón ocupa el mismo ancho */
+    flex: 1; 
     text-align: center;
     padding: 12px 0;
     font-size: 16px;
@@ -183,56 +179,51 @@
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     border-radius: 5px 5px 0 0;
-    background-color: #dbdbdb; /* Color uniforme por defecto */
+    background-color: #dbdbdb;
 }
 
 /* Colores de fondo para cada sección cuando están activas */
 .tab-button.all.active {
-    background-color: #004c9e; /* Azul claro para "Todas" */
+    background-color: #004c9e; /* Azul para "Todas" */
     color: white;
 }
 
 .tab-button.meteorological.active {
-    background-color: #d40303; /* Rojo claro para "Meteorológicas" */
+    background-color: #d40303; /* Rojo para "Meteorológicas" */
     color: white;
 }
 
 .tab-button.hydrological.active {
-    background-color: #06a32b; /* Verde claro para "Hidrológicas" */
+    background-color: #06a32b; /* Verde para "Hidrológicas" */
     color: white;
 }
 
-/* Efecto hover para todos los botones */
 .tab-button:hover {
-    background-color: #e0ebff; /* Un tono más oscuro en hover para todos los botones */
+    background-color: #e0ebff;
 }
 
-/* Efecto activo (resaltado) */
 .tab-button.active {
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para resaltar el botón activo */
-    transform: translateY(-4px); /* Levanta el botón ligeramente */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+    transform: translateY(-4px); 
 }
-/* Contenedor para cards */
+
 .row.mt-4 {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Centra la única card si está sola */
+    justify-content: center; 
 }
 
-/* Estilo para una sola card: ocupa el 100% del contenedor */
 .row.mt-4 .col-md-3:only-child, .row.mt-4 .col-sm-6:only-child {
-    flex: 0 0 100%; /* Ocupa todo el ancho si es la única card */
+    flex: 0 0 100%; 
     max-width: 100%;
 }
 
-/* Estilo para dos cards: cada una ocupa el 50% del ancho */
 .row.mt-4 .col-md-3, .row.mt-4 .col-sm-6 {
-    flex: 0 0 48%; /* Ocupa 48% cuando hay dos cards */
+    flex: 0 0 48%; 
     max-width: 48%;
-    margin-bottom: 20px; /* Espacio entre filas */
+    margin-bottom: 20px;
 }
 
-/* Estilos para cada tarjeta de estación */
 .card-custom {
     width: 100%;
     border: 1px solid #ececec;
@@ -243,14 +234,9 @@
     overflow: hidden;
 }
 
-.card-custom:hover {
-    transform: scale(1.05); /* Ampliación en hover */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3); /* Aumenta la sombra en hover */
-}
-
 .card-img-top {
     width: 100%;
-    height: 250px; /* Aumenta la altura de la imagen */
+    height: 250px;
     object-fit: cover;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -291,18 +277,18 @@
 
 .btn-ver-estaciones:hover {
     background-color: #4259db;
-    transform: translateY(-2px); /* Eleva el botón al hacer hover */
+    transform: translateY(-2px); 
 }
 
 /* Adaptación para pantallas pequeñas */
 @media (max-width: 768px) {
     .row.mt-4 .col-md-3, .row.mt-4 .col-sm-6 {
-        flex: 0 0 100%; /* Ocupa todo el ancho en pantallas pequeñas */
+        flex: 0 0 100%; 
         max-width: 100%;
     }
 
     .card-img-top {
-        height: 200px; /* Ajusta la altura en pantallas más pequeñas */
+        height: 200px; 
     }
     .card-title {
         font-size: 1rem;
@@ -398,10 +384,10 @@
     }
 
     .row.mt-4 .col-md-4, .row.mt-4 .col-sm-6 {
-        flex: 0 0 90%; /* Cada card toma el 90% del ancho en pantallas muy pequeñas */
+        flex: 0 0 90%; 
         max-width: 90%;
     }
     .card-img-top {
-        height: 180px; /* Ajusta la altura en pantallas más pequeñas */
+        height: 180px; 
     }
 }

@@ -28,30 +28,30 @@ const obtenerDatosEstaciones = async () => {
 function MapaConEstaciones() {
     const mapContainerRef = useRef(null);
     const [map, setMap] = useState(null);
+    const [initialView, setInitialView] = useState({ center: [-79.2, -4.0], zoom: 12 });
     const [activeSection, setActiveSection] = useState('all');
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedMicrocuenca, setSelectedMicrocuenca] = useState(null);
+    const markersRef = useRef([]);
 
     useEffect(() => {
         if (mapContainerRef.current) {
-            // Inicializar el mapa de Mapbox
             const mapInstance = new mapboxgl.Map({
                 container: mapContainerRef.current,
                 style: 'mapbox://styles/mapbox/satellite-streets-v12',
-                center: [-79.2, -4.0],
-                zoom: 12,
+                center: initialView.center,
+                zoom: initialView.zoom,
             });
 
             mapInstance.addControl(new mapboxgl.NavigationControl(), 'top-right');
             setMap(mapInstance);
 
-            return () => mapInstance.remove(); // Limpiar el mapa cuando se desmonte el componente
+            return () => mapInstance.remove(); 
         }
-    }, [mapContainerRef]);
+    }, [mapContainerRef, initialView]);
 
     useEffect(() => {
-        // Cargar datos de estaciones
         const cargarDatos = async () => {
             setLoading(true);
             const estaciones = await obtenerDatosEstaciones();
@@ -66,10 +66,44 @@ function MapaConEstaciones() {
         const response = await ObtenerPost(getToken(), 'estaciones/operativas/microcuenca', { external: externalId });
         if (response.code === 200) {
             setSelectedMicrocuenca({ ...selectedMicrocuenca, estaciones: response.info });
+
+            markersRef.current.forEach(marker => marker.remove());
+            markersRef.current = [];
+    
+            const bounds = new mapboxgl.LngLatBounds();
+            let hasValidCoordinates = false;
+
+            response.info.forEach((estacion) => {
+                const coordenadas = [estacion.longitud, estacion.latitud];
+    
+                if (coordenadas && coordenadas.length === 2 && !isNaN(coordenadas[0]) && !isNaN(coordenadas[1])) {
+                    const marker = new mapboxgl.Marker()
+                        .setLngLat(coordenadas)
+                        .setPopup(new mapboxgl.Popup().setText(estacion.nombre)) 
+                        .addTo(map);
+    
+                    markersRef.current.push(marker);
+                    bounds.extend(coordenadas);
+                    hasValidCoordinates = true;
+                }
+            });
+
+            if (hasValidCoordinates) {
+                map.fitBounds(bounds, { padding: 50 });
+            } else {
+                console.warn("No se encontraron coordenadas válidas para ajustar la vista del mapa.");
+            }
         } else {
             console.error("Error al obtener estaciones:", response.msg);
         }
         setLoading(false);
+    };
+
+    const volverVistaInicial = () => {
+        setSelectedMicrocuenca(null);
+        markersRef.current.forEach(marker => marker.remove());
+        markersRef.current = [];
+        map.flyTo({ center: initialView.center, zoom: initialView.zoom });
     };
 
     const renderMicrocuencaCards = () => {
@@ -109,7 +143,7 @@ function MapaConEstaciones() {
 
         return (
             <div>
-                <button className="btn btn-back" onClick={() => setSelectedMicrocuenca(null)}>
+                <button className="btn btn-back" onClick={volverVistaInicial}>
                     <span>&larr;</span>
                 </button>
 
@@ -134,7 +168,6 @@ function MapaConEstaciones() {
                     </button>
                 </div>
 
-
                 <div className="row mt-4">
                     {estacionesFiltradas.map((item, index) => (
                         <div key={index} className="col-md-3 col-sm-6 mb-4">
@@ -158,10 +191,7 @@ function MapaConEstaciones() {
 
     return (
         <div className="mapa-con-estaciones-container">
-            <div
-                className="mapa-section"
-                ref={mapContainerRef}
-            />
+            <div className="mapa-section" ref={mapContainerRef} />
             <div className="estaciones-section">
                 <div className="custom-container-cards">
                     {!selectedMicrocuenca && (
