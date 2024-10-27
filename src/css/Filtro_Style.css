@@ -1,13 +1,31 @@
+.filtro-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.filtro-item {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .filtro-container {
+        flex-direction: column;
+    }
+}
 
 .custom-button-filtro {
     background-color: #537EC5;
     border: none;
     border-radius: 0.3rem;
-    padding: 0.75rem 1.5rem;
     color: white;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
+    width: 100%;
 }
 .custom-button-filtro:hover {
     background-color: #BBE1FA;

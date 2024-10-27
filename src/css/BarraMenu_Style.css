@@ -1,5 +1,5 @@
 .custom-navbar {
-    background: linear-gradient(135deg, #0C2840, #57687c);
+    background: #0C2840;
     padding: 4px 0;
     width: 100%;
     position: sticky;
@@ -11,7 +11,7 @@
 .header1 {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Alineación a la izquierda */
+    justify-content: flex-start; 
     max-width: 1800px;
     margin: 0 auto;
     padding: 0 20px;

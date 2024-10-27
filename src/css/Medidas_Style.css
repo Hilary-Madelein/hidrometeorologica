@@ -8,16 +8,23 @@
     border: 1px solid #f1f1f1;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease-in-out;
-    padding: 15px;
+    padding: 0 1rem 1rem 1rem;
+    position: relative;
     text-align: center;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    
+    height: 230px;
+    overflow: visible;
+    margin-top: 50px;
 }
 
 .icono-variable {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    z-index: 1;
 }
 
 .valor-variable {
@@ -26,15 +33,29 @@
     white-space: nowrap;
 }
 
+.variable-content {
+    margin-top: 30px; 
+}
+
 .custom-card:hover {
-    transform: translateY(-5px); /* Efecto de levantamiento en hover */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3), 0 18px 30px rgba(0, 0, 0, 0.3); /* Sombra más intensa en hover */
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3), 0 18px 30px rgba(0, 0, 0, 0.3);
 }
 
 .variable-title {
-    font-size: 2rem;
-    font-weight: 400;
-    color: #0C2840;
+    margin-top: 40px;
+    font-size: 30px;
+}
+
+.medida-variable {
+    font-size: 14px;
+    color: #787A91;
+}
+
+.valor-variable p {
+    margin: 0;
+    font-size: 16px;
+    color: #555;
 }
 
 .titulo-variables {
@@ -43,39 +64,54 @@
     color: #0C2840;
 }
 
-.variable-value{
+.variable-value {
     font-weight: 800;
     font-size: 2.5rem;
 }
 
 /* Ajustes adicionales para pantallas más pequeñas */
 @media (max-width: 768px) {
+    .custom-card {
+        margin-top: 50px;
+        height: 210px;
+    }
+    
     .titulo-variables {
         font-size: 1.6rem;
     }
+
     .icono-variable {
-        width: 40px;
-        height: 40px;
+        width: 80px;
+        height: 80px;
     }
+
     .variable-title {
-        font-size: 1.2rem;
+        font-size: 1.6rem;
     }
+
     .valor-variable {
         font-size: 1.5rem;
     }
 }
 
 @media (max-width: 576px) {
+    .custom-card {
+        margin-top: 20px;
+    }
+
     .titulo-variables {
         font-size: 1.3rem;
     }
+
     .icono-variable {
-        width: 30px;
-        height: 30px;
+        width: 80px;
+        height: 80px;
     }
+
     .variable-title {
-        font-size: 1rem;
+        font-size: 2rem;
     }
+
     .valor-variable {
         font-size: 1.2rem;
     }

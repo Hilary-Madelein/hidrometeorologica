@@ -14,7 +14,7 @@ import '../css/Principal_Style.css';
 
 const chartColors = ['#362FD9', '#1AACAC', '#DB005B', '#19A7CE', '#DF2E38', '#8DCBE6'];
 
-function MedidasDinamicas({ filtro }) {
+function Medidas({ filtro }) {
     const [variables, setVariables] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -58,7 +58,9 @@ function MedidasDinamicas({ filtro }) {
                         navigate("/login");
                     }
                 } else {
-                    const medidas = extraerMedidas(info.info);
+                    const medidas = extraerMedidas(info.info, filtro.tipo);
+                    console.log("DATITA", info.info);
+
                     setVariables(medidas);
                 }
             } catch (error) {
@@ -72,92 +74,75 @@ function MedidasDinamicas({ filtro }) {
         fetchData();
     }, [filtro, navigate]);
 
-    const extraerMedidas = (info) => {
-        if (Array.isArray(info)) {
-            return [
-                {
-                    nombre: "Temperatura",
-                    valor: `Promedio: ${(info.reduce((acc, mes) => acc + mes.promedioTemperatura, 0) / info.length).toFixed(2)} °C\nMáx: ${(Math.max(...info.map(mes => mes.maxTemperatura))).toFixed(2)} °C\nMín: ${(Math.min(...info.map(mes => mes.minTemperatura))).toFixed(2)} °C`,
-                    icono: temperaturaIcon,
-                    unidad: "°C",
-                    color: chartColors[0],
-                    detalles: info.map(mes => ({
-                        mes: mes.mes,
-                        promedio: mes.promedioTemperatura,
-                        max: mes.maxTemperatura,
-                        min: mes.minTemperatura
-                    }))
-                },
-                {
-                    nombre: "Humedad",
-                    valor: `Promedio: ${(info.reduce((acc, mes) => acc + mes.promedioHumedad, 0) / info.length).toFixed(2)} %`,
-                    icono: humedadIcon,
-                    unidad: "%",
-                    color: chartColors[1],
-                    detalles: info.map(mes => ({
-                        mes: mes.mes,
-                        promedio: mes.promedioHumedad
-                    }))
-                },
-                {
-                    nombre: "Presión",
-                    valor: `Promedio: ${(info.reduce((acc, mes) => acc + mes.promedioPresion, 0) / info.length).toFixed(2)} hPa`,
-                    icono: presionIcon,
-                    unidad: "hPa",
-                    color: chartColors[2],
-                    detalles: info.map(mes => ({
-                        mes: mes.mes,
-                        promedio: mes.promedioPresion
-                    }))
-                },
-                {
-                    nombre: "Lluvia",
-                    valor: `Suma: ${info.reduce((acc, mes) => acc + mes.sumaLluvia, 0).toFixed(2)} mm`,
-                    icono: lluviaIcon,
-                    unidad: "mm",
-                    color: chartColors[3],
-                    detalles: info.map(mes => ({
-                        mes: mes.mes,
-                        total: mes.sumaLluvia
-                    }))
-                },
-            ];
-        } else {
-            return [
-                {
-                    nombre: "Temperatura",
-                    valor: `Promedio: ${info.promedioTemperatura.toFixed(2)} °C\nMáx: ${info.maxTemperatura.toFixed(2)} °C\nMín: ${info.minTemperatura.toFixed(2)} °C`,
-                    icono: temperaturaIcon,
-                    unidad: "°C",
-                    color: chartColors[0],
-                    detalles: []
-                },
-                {
-                    nombre: "Humedad",
-                    valor: `Promedio: ${info.promedioHumedad.toFixed(2)} %`,
-                    icono: humedadIcon,
-                    unidad: "%",
-                    color: chartColors[1],
-                    detalles: []
-                },
-                {
-                    nombre: "Presión",
-                    valor: `Promedio: ${info.promedioPresion.toFixed(2)} hPa`,
-                    icono: presionIcon,
-                    unidad: "hPa",
-                    color: chartColors[2],
-                    detalles: []
-                },
-                {
-                    nombre: "Lluvia",
-                    valor: `Suma: ${info.sumaLluvia.toFixed(2)} mm`,
-                    icono: lluviaIcon,
-                    unidad: "mm",
-                    color: chartColors[3],
-                    detalles: []
-                },
-            ];
-        }
+    const extraerMedidas = (info, filtroTipo) => {
+        const medidasAgrupadas = {};
+        const data = Array.isArray(info) ? info : [info];
+    
+        data.forEach((dato) => {
+            Object.keys(dato).forEach((clave) => {
+                if (clave === "mes") return;
+                const [operacion, nombreMedida] = clave.split('_');
+    
+                if (!medidasAgrupadas[nombreMedida]) {
+                    medidasAgrupadas[nombreMedida] = {
+                        nombre: nombreMedida,
+                        valores: {
+                            promedio: null,
+                            max: null,
+                            min: null,
+                            suma: null
+                        },
+                        icono: '',
+                        unidad: '',
+                        color: '',
+                        detalles: []
+                    };
+                }
+    
+                // Configuración de icono, unidad, y color
+                if (nombreMedida === 'Temperatura') {
+                    medidasAgrupadas[nombreMedida].icono = temperaturaIcon;
+                    medidasAgrupadas[nombreMedida].unidad = "°C";
+                    medidasAgrupadas[nombreMedida].color = chartColors[0];
+                } else if (nombreMedida === 'Humedad') {
+                    medidasAgrupadas[nombreMedida].icono = humedadIcon;
+                    medidasAgrupadas[nombreMedida].unidad = "%";
+                    medidasAgrupadas[nombreMedida].color = chartColors[1];
+                } else if (nombreMedida === 'Presion') {
+                    medidasAgrupadas[nombreMedida].icono = presionIcon;
+                    medidasAgrupadas[nombreMedida].unidad = "hPa";
+                    medidasAgrupadas[nombreMedida].color = chartColors[2];
+                } else if (nombreMedida === 'Lluvia') {
+                    medidasAgrupadas[nombreMedida].icono = lluviaIcon;
+                    medidasAgrupadas[nombreMedida].unidad = "mm";
+                    medidasAgrupadas[nombreMedida].color = chartColors[3];
+                }
+    
+                // Guardar valores individuales
+                if (operacion === 'avg') medidasAgrupadas[nombreMedida].valores.promedio = dato[clave];
+                if (operacion === 'max') medidasAgrupadas[nombreMedida].valores.max = dato[clave];
+                if (operacion === 'min') medidasAgrupadas[nombreMedida].valores.min = dato[clave];
+                if (operacion === 'sum') medidasAgrupadas[nombreMedida].valores.suma = dato[clave];
+    
+                // Control de duplicados solo para "mensual"
+                if (filtroTipo === "mensual") {
+                    // Verificar si el mes ya ha sido agregado a los detalles para evitar duplicación
+                    const existeMes = medidasAgrupadas[nombreMedida].detalles.find((detalle) => detalle.mes === dato.mes);
+    
+                    if (!existeMes) {
+                        medidasAgrupadas[nombreMedida].detalles.push({
+                            mes: dato.mes,
+                            promedio: dato[`avg_${nombreMedida}`],
+                            max: dato[`max_${nombreMedida}`],
+                            min: dato[`min_${nombreMedida}`],
+                            suma: dato[`sum_${nombreMedida}`]
+                        });
+                    }
+                }
+            });
+        });
+    
+        return Object.values(medidasAgrupadas);
     };
 
     const handleShowModal = (nombre, detalles, unidad) => {
@@ -172,7 +157,7 @@ function MedidasDinamicas({ filtro }) {
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-                <Spinner animation="border" role="status" style={{ width: '3rem', height: '3rem', margin:'10px' }}>
+                <Spinner animation="border" role="status" style={{ width: '3rem', height: '3rem', margin: '10px', color: '#0C2840' }}>
                     <span className="sr-only"></span>
                 </Spinner>
                 <p className="mt-3">Cargando datos...</p>
@@ -184,52 +169,103 @@ function MedidasDinamicas({ filtro }) {
         <div className="container-fluid custom-container-medidas">
             <div className="row mb-4 justify-content-center">
                 {variables.map((variable, index) => (
-                    <div key={index} className="col-lg-3 col-md-4 col-sm-6 col-12 mb-4 d-flex align-items-stretch">
+                    <div
+                        key={index}
+                        className="col-lg-3 col-md-4 col-sm-6 col-12 mb-4 d-flex align-items-stretch"
+                    >
                         <div
-                            className="card custom-card p-3 shadow-sm w-100 d-flex justify-content-center align-items-center"
-                            style={{ borderTop: `8px solid ${variable.color}`, height: '260px', textAlign: 'center' }}
+                            className="card custom-card shadow-sm w-100 d-flex justify-content-center align-items-center"
+                            style={{ borderTop: `8px solid ${variable.color}` }}
                         >
-                            <img src={variable.icono} alt={`${variable.nombre} Icono`} className="icono-variable" style={{ width: '80px', height: '80px' }} />
-                            <h5 className="variable-title mt-2"><strong>{variable.nombre}</strong></h5>
-                            <p className="mb-0" style={{ fontSize: '14px', color: '#787A91' }}><strong>Medida: </strong>{variable.unidad}</p>
-                            
-                            {filtro.tipo !== "mensual" && (
-                                <div className="valor-variable mt-3 text-left">
-                                    {variable.valor.split('\n').map((line, i) => (
-                                        <p key={i} style={{ margin: 0, fontSize: '16px' }}>{line}</p>
-                                    ))}
-                                </div>
-                            )}
-                            
-                            {filtro.tipo === "mensual" && (
-                                <Button className="btn btn-primary custom-button-filtro" onClick={() => handleShowModal(variable.nombre, variable.detalles, variable.unidad)} style={{marginTop:'10px'}}>Ver detalle</Button>
-                            )}
+                            <img
+                                src={variable.icono}
+                                alt={`${variable.nombre} Icono`}
+                                className="icono-variable"
+                            />
+                            <div className="variable-content">
+                                <h5 className="variable-title"><strong>{variable.nombre}</strong></h5>
+                                <p className="medida-variable"><strong>Medida: </strong>{variable.unidad}</p>
+
+                                {filtro.tipo === "mensual" ? (
+                                    <Button
+                                        className="btn btn-primary custom-button-filtro"
+                                        onClick={() =>
+                                            handleShowModal(
+                                                variable.nombre,
+                                                variable.detalles,
+                                                variable.unidad
+                                            )
+                                        }
+                                    >
+                                        Ver detalle
+                                    </Button>
+                                ) : (
+                                    <div className="valor-variable">
+                                        {variable.valores.promedio !== null && (
+                                            <p>
+                                                <strong>Promedio:</strong>{" "}
+                                                {variable.valores.promedio.toFixed(2)} {variable.unidad}
+                                            </p>
+                                        )}
+                                        {variable.valores.max !== null && (
+                                            <p>
+                                                <strong>Máx:</strong> {variable.valores.max.toFixed(2)}{" "}
+                                                {variable.unidad}
+                                            </p>
+                                        )}
+                                        {variable.valores.min !== null && (
+                                            <p>
+                                                <strong>Mín:</strong> {variable.valores.min.toFixed(2)}{" "}
+                                                {variable.unidad}
+                                            </p>
+                                        )}
+                                        {variable.valores.suma !== null && (
+                                            <p>
+                                                <strong>Suma:</strong> {variable.valores.suma.toFixed(2)}{" "}
+                                                {variable.unidad}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
 
+
             <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
-                <Modal.Header style={{background:'var(--blue-unl)'}}>
-                    <Modal.Title style={{color:'var(--white)', fontWeight:'bold'}}>{tituloModal}</Modal.Title>
+                <Modal.Header style={{ background: 'var(--blue-unl)' }}>
+                    <Modal.Title style={{ color: 'var(--white)', fontWeight: 'bold' }}>{tituloModal}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="container">
-                        {detalleMes.map((detalle, index) => (
-                            <div key={index} className="row border-bottom py-2">
-                                <div className="col-12 col-md-4"><strong>{detalle.mes}</strong></div>
-                                <div className="col-12 col-md-8">
-                                    <p>
-                                        <strong>Promedio:</strong> {detalle.promedio?.toFixed(2) || detalle.total?.toFixed(2)} {unidad}
-                                    </p>
-                                    {detalle.max && <p><strong>Máx:</strong> {detalle.max.toFixed(2)} °C</p>}
-                                    {detalle.min && <p><strong>Mín:</strong> {detalle.min.toFixed(2)} °C</p>}
+                        {detalleMes.length > 0 ? (
+                            detalleMes.map((detalle, index) => (
+                                <div key={index} className="row border-bottom py-2">
+                                    <div className="col-12 col-md-4"><strong>{detalle.mes}</strong></div>
+                                    <div className="col-12 col-md-8">
+                                        {detalle.promedio !== undefined && (
+                                            <p><strong>Promedio:</strong> {detalle.promedio.toFixed(2)} {unidad}</p>
+                                        )}
+                                        {detalle.max !== undefined && (
+                                            <p><strong>Máx:</strong> {detalle.max.toFixed(2)} {unidad}</p>
+                                        )}
+                                        {detalle.min !== undefined && (
+                                            <p><strong>Mín:</strong> {detalle.min.toFixed(2)} {unidad}</p>
+                                        )}
+                                        {detalle.suma !== undefined && (
+                                            <p><strong>Suma:</strong> {detalle.suma.toFixed(2)} {unidad}</p>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p>No hay datos disponibles para esta medida.</p>
+                        )}
                     </div>
                 </Modal.Body>
-                <Modal.Footer style={{background:'var(--blue-unl)'}}>
+                <Modal.Footer style={{ background: 'var(--blue-unl)' }}>
                     <Button variant="btn btn-light" onClick={handleCloseModal}>Cerrar</Button>
                 </Modal.Footer>
             </Modal>
@@ -237,4 +273,4 @@ function MedidasDinamicas({ filtro }) {
     );
 }
 
-export default MedidasDinamicas;
+export default Medidas;

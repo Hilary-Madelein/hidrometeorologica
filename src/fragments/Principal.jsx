@@ -23,12 +23,7 @@ function Principal() {
 
             <div className="container-fluid custom-container">
                 <div className="row align-items-stretch mb-4">
-                    <div className="col-lg-6 col-md-12 mb-4">
-                        <div className="h-100 custom-container-mapa d-flex flex-column">
-                            <Mapa />
-                        </div>
-                    </div>
-                    <div className="col-lg-6 col-md-12 mb-4">
+                    <div className="col-lg-12 col-md-12 mb-4">
                         <div className="h-100 custom-container-cards d-flex flex-column">
                             <CardEstaciones />
                         </div>

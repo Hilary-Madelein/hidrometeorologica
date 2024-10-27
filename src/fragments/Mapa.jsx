@@ -13,7 +13,7 @@ function Mapa() {
     const mapInstance = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [-79.2, -4.0],  // Coordenadas de referencia
+      center: [-79.2, -4.0], 
       zoom: 12,
     });
 
@@ -26,7 +26,7 @@ function Mapa() {
   }, []);
 
   return (
-    <div className="map-container custom-container-mapa" ref={mapContainerRef} />  // Añadimos clases para manejar el tamaño
+    <div className="map-container custom-container-mapa" ref={mapContainerRef} />  
   );
 }
 

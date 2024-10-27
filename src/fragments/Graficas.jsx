@@ -4,7 +4,6 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, 
 import * as XLSX from 'xlsx';  // Para exportar a Excel
 import { ObtenerPost } from '../hooks/Conexion';
 import { borrarSesion, getToken } from '../utils/SessionUtil';
-import Filtro from './Filtro';
 import mensajes from '../utils/Mensajes';
 import { useNavigate } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';  // Librería de Bootstrap para mostrar un spinner
@@ -75,7 +74,6 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
           }
         } else {
           setDatosGrafica(info.info);
-          console.log('Datos recibidos:', info.info);
         }
       } catch (error) {
         setDatosGrafica([]);
@@ -96,9 +94,9 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
     if (filtro.tipo === "mensual") {
       labels = datosGrafica.map(item => item.mes);  // Para datos mensuales
     } else if (filtro.tipo === "rangoFechas" || filtro.tipo === "mesAnio") {
-      labels = datosGrafica.map(item => item.dia);  
+      labels = datosGrafica.map(item => item.dia);
     } else {
-      labels = datosGrafica.map(item => item.hora); 
+      labels = datosGrafica.map(item => item.hora);
     }
 
     return {
@@ -106,10 +104,15 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
       datasets: [
         {
           label: `${medida}`,
-          data: datosGrafica.map(item => item.medidas[medida]),  // Usamos los datos de medidas para graficar
+          data: datosGrafica.map(item => item.medidas[medida]),  
           borderColor: chartColors[colorIndex % chartColors.length],
           backgroundColor: `${chartColors[colorIndex % chartColors.length]}88`,
           borderWidth: 2,
+          pointRadius: 6,  
+          pointHoverRadius: 10,  
+          pointBorderWidth: 2, 
+          pointStyle: 'circle',  
+          tension: 0.4, 
         }
       ]
     };
@@ -117,44 +120,28 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
 
   // Función para exportar datos a Excel
   const exportToExcel = (medida) => {
-    // Crear una hoja de cálculo vacía
     const workbook = XLSX.utils.book_new();
-
-    // Crear los datos que quieres agregar al Excel
     const datos = datosGrafica.map((item) => ({
       Periodo: filtro.tipo === "mensual" ? item.mes : (filtro.tipo === "rangoFechas" || filtro.tipo === "mesAnio") ? item.dia : item.hora,
       [medida]: item.medidas[medida],
     }));
 
-    // Encabezados de tu tabla
     const encabezado = [
-      ["Universidad Nacional de Loja"], // Fila con el título superior
-      ["Datos de Microcuenca Norec"],   // Fila con la descripción del archivo
-      [],                              // Fila en blanco para separación
-      ["Periodo", medida]              // Fila con los títulos de las columnas
+      ["Universidad Nacional de Loja"],
+      ["Datos de Microcuenca Norec"],
+      [],
+      ["Periodo", medida]
     ];
 
-    // Convertir los datos a hoja de cálculo, con encabezados
-    const worksheet = XLSX.utils.aoa_to_sheet(encabezado); // Agrega el encabezado y el formato inicial
+    const worksheet = XLSX.utils.aoa_to_sheet(encabezado);
+    XLSX.utils.sheet_add_json(worksheet, datos, { origin: "A5", skipHeader: true });
 
-    // Agregar los datos a la hoja de cálculo
-    XLSX.utils.sheet_add_json(worksheet, datos, { origin: "A5", skipHeader: true });  // Agregar los datos debajo del encabezado en la fila 5
-
-    // Ajustar el ancho de las columnas para que el contenido sea legible
-    const wscols = [
-      { wch: 15 }, // Ancho de la columna de "Periodo"
-      { wch: 10 }  // Ancho de la columna de la medida
-    ];
+    const wscols = [{ wch: 15 }, { wch: 10 }];
     worksheet['!cols'] = wscols;
+    worksheet['A4'].s = { font: { bold: true } };
+    worksheet['B4'].s = { font: { bold: true } };
 
-    // Aplicar estilos en negrita a los títulos
-    worksheet['A4'].s = { font: { bold: true } }; // 'Periodo'
-    worksheet['B4'].s = { font: { bold: true } }; // El nombre de la medida
-
-    // Agregar la hoja de trabajo al libro
     XLSX.utils.book_append_sheet(workbook, worksheet, medida);
-
-    // Guardar el archivo Excel
     XLSX.writeFile(workbook, `${medida}.xlsx`);
   };
 
@@ -169,12 +156,14 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
     );
   }
 
-  return (
-    <div className="container-fluid" custom-container-graficas>
+  // Determinar si los datos son muchos (más de 50 por ejemplo) para mostrar una gráfica debajo de otra
+  const muchosDatos = datosGrafica.length > 50;
 
-      <div className="row">
+  return (
+    <div className="container-fluid custom-container-graficas">
+      <div className={`row ${muchosDatos ? 'flex-column' : ''}`}>
         {medidasDisponibles.map((medida, index) => (
-          <div className="col-lg-6 col-md-6 mb-4" key={index}>
+          <div className={`col-${muchosDatos ? '12' : '6'} mb-4`} key={index}>
             <div style={{
               padding: '20px',
               border: '1px solid #ffffff',
@@ -221,6 +210,7 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
                           font: {
                             size: 14,
                           },
+                          maxTicksLimit: muchosDatos ? undefined : 10  // Mostrar todos los datos si hay muchos
                         },
                       },
                       y: {
@@ -275,6 +265,7 @@ function Graficas({ filtro }) {  // Recibimos el filtro como prop desde Principa
                           font: {
                             size: 14,
                           },
+                          maxTicksLimit: muchosDatos ? undefined : 15
                         },
                       },
                       y: {
