@@ -25,7 +25,7 @@ function Medidas({ filtro }) {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!filtro || (!filtro.fechaInicio && !filtro.mesSeleccionado && !filtro.tipo)) {
+            if (!filtro || (!filtro.fechaInicio && !filtro.mesSeleccionado && !filtro.tipo) || !filtro.estacion) {
                 setVariables([]);
                 return;
             }
@@ -36,16 +36,21 @@ function Medidas({ filtro }) {
 
             try {
                 if (filtro.tipo === "mensual") {
-                    url = '/listar/temperatura/mensual/datos';
+                    url = '/medidas/mensuales/promediadas';
                     body.escalaDeTiempo = filtro.tipo;
+                    body.external_id = filtro.estacion;
                 } else if (["15min", "30min", "diaria", "hora"].includes(filtro.tipo)) {
                     body.escalaDeTiempo = filtro.tipo;
                 } else if (filtro.tipo === "mesAnio") {
-                    body.mes = filtro.mesSeleccionado;
-                    body.anio = filtro.anioSeleccionado;
+                    url = '/medidas/desglosemes/promediadas';
+                    body.mes = filtro.mes;
+                    body.anio = filtro.anio;
+                    body.external_id = filtro.estacion;
                 } else if (filtro.tipo === "rangoFechas") {
+                    url = '/medidas/rango/promediadas';
                     body.fechaInicio = new Date(filtro.fechaInicio).toISOString();
                     body.fechaFin = new Date(filtro.fechaFin).toISOString();
+                    body.external_id = filtro.estacion;
                 }
 
                 const info = await ObtenerPost(getToken(), url, body);
@@ -59,8 +64,6 @@ function Medidas({ filtro }) {
                     }
                 } else {
                     const medidas = extraerMedidas(info.info, filtro.tipo);
-                    console.log("DATITA", info.info);
-
                     setVariables(medidas);
                 }
             } catch (error) {
@@ -76,74 +79,103 @@ function Medidas({ filtro }) {
 
     const extraerMedidas = (info, filtroTipo) => {
         const medidasAgrupadas = {};
-        const data = Array.isArray(info) ? info : [info];
     
-        data.forEach((dato) => {
-            Object.keys(dato).forEach((clave) => {
-                if (clave === "mes") return;
-                const [operacion, nombreMedida] = clave.split('_');
+        if (["15min", "30min", "hora", "diaria"].includes(filtroTipo)) {
+            // Procesar formato agregado (ejemplo: avg_Temperatura, max_Temperatura)
+            Object.entries(info).forEach(([clave, valor]) => {
+                const [metrica, nombreMedida] = clave.split("_"); // Separar avg, max, min de Temperatura, Humedad, etc.
     
                 if (!medidasAgrupadas[nombreMedida]) {
                     medidasAgrupadas[nombreMedida] = {
                         nombre: nombreMedida,
-                        valores: {
-                            promedio: null,
-                            max: null,
-                            min: null,
-                            suma: null
-                        },
+                        valores: {}, // Guardaremos las métricas aquí
                         icono: '',
                         unidad: '',
                         color: '',
-                        detalles: []
                     };
                 }
     
-                // Configuración de icono, unidad, y color
-                if (nombreMedida === 'Temperatura') {
-                    medidasAgrupadas[nombreMedida].icono = temperaturaIcon;
-                    medidasAgrupadas[nombreMedida].unidad = "°C";
-                    medidasAgrupadas[nombreMedida].color = chartColors[0];
-                } else if (nombreMedida === 'Humedad') {
-                    medidasAgrupadas[nombreMedida].icono = humedadIcon;
-                    medidasAgrupadas[nombreMedida].unidad = "%";
-                    medidasAgrupadas[nombreMedida].color = chartColors[1];
-                } else if (nombreMedida === 'Presion') {
-                    medidasAgrupadas[nombreMedida].icono = presionIcon;
-                    medidasAgrupadas[nombreMedida].unidad = "hPa";
-                    medidasAgrupadas[nombreMedida].color = chartColors[2];
-                } else if (nombreMedida === 'Lluvia') {
-                    medidasAgrupadas[nombreMedida].icono = lluviaIcon;
-                    medidasAgrupadas[nombreMedida].unidad = "mm";
-                    medidasAgrupadas[nombreMedida].color = chartColors[3];
-                }
+                // Asignar valores según la métrica (promedio, máx, min, suma)
+                if (metrica === "avg") medidasAgrupadas[nombreMedida].valores.promedio = valor;
+                if (metrica === "max") medidasAgrupadas[nombreMedida].valores.max = valor;
+                if (metrica === "min") medidasAgrupadas[nombreMedida].valores.min = valor;
+                if (metrica === "sum") medidasAgrupadas[nombreMedida].valores.suma = valor;
     
-                // Guardar valores individuales
-                if (operacion === 'avg') medidasAgrupadas[nombreMedida].valores.promedio = dato[clave];
-                if (operacion === 'max') medidasAgrupadas[nombreMedida].valores.max = dato[clave];
-                if (operacion === 'min') medidasAgrupadas[nombreMedida].valores.min = dato[clave];
-                if (operacion === 'sum') medidasAgrupadas[nombreMedida].valores.suma = dato[clave];
+                // Configuración de icono, unidad y color
+                configurarAtributos(medidasAgrupadas[nombreMedida], nombreMedida);
+            });
+        } else {
+            // Procesar el formato actual (con "dia", "mes", "medidas")
+            info.forEach((dato) => {
+                const { dia, mes, medidas } = dato;
     
-                // Control de duplicados solo para "mensual"
-                if (filtroTipo === "mensual") {
-                    // Verificar si el mes ya ha sido agregado a los detalles para evitar duplicación
-                    const existeMes = medidasAgrupadas[nombreMedida].detalles.find((detalle) => detalle.mes === dato.mes);
+                Object.entries(medidas).forEach(([nombreMedida, valores]) => {
+                    if (!medidasAgrupadas[nombreMedida]) {
+                        medidasAgrupadas[nombreMedida] = {
+                            nombre: nombreMedida,
+                            valores: {
+                                promedio: valores.PROMEDIO || 0,
+                                max: valores.MAX || 0,
+                                min: valores.MIN || 0,
+                                suma: valores.SUMA || 0,
+                            },
+                            icono: '',
+                            unidad: '',
+                            color: '',
+                            detalles: []
+                        };
     
-                    if (!existeMes) {
+                        // Configurar icono, unidad y color
+                        configurarAtributos(medidasAgrupadas[nombreMedida], nombreMedida);
+                    }
+    
+                    // Agregar detalles según el tipo de filtro
+                    if (filtroTipo === "mensual" && mes) {
                         medidasAgrupadas[nombreMedida].detalles.push({
-                            mes: dato.mes,
-                            promedio: dato[`avg_${nombreMedida}`],
-                            max: dato[`max_${nombreMedida}`],
-                            min: dato[`min_${nombreMedida}`],
-                            suma: dato[`sum_${nombreMedida}`]
+                            mes,
+                            promedio: valores.PROMEDIO !== undefined ? valores.PROMEDIO : null,
+                            max: valores.MAX !== undefined ? valores.MAX : null,
+                            min: valores.MIN !== undefined ? valores.MIN : null,
+                            suma: valores.SUMA !== undefined ? valores.SUMA : null,
+                        });
+                    } else if (["rangoFechas", "mesAnio"].includes(filtroTipo) && dia) {
+                        medidasAgrupadas[nombreMedida].detalles.push({
+                            dia,
+                            promedio: valores.PROMEDIO !== undefined ? valores.PROMEDIO : null,
+                            max: valores.MAX !== undefined ? valores.MAX : null,
+                            min: valores.MIN !== undefined ? valores.MIN : null,
+                            suma: valores.SUMA !== undefined ? valores.SUMA : null,
                         });
                     }
-                }
+                });
             });
-        });
+        }
     
         return Object.values(medidasAgrupadas);
     };
+    
+    // Función auxiliar para configurar icono, unidad y color
+    const configurarAtributos = (medida, nombreMedida) => {
+        if (nombreMedida === 'Temperatura') {
+            medida.icono = temperaturaIcon;
+            medida.unidad = "°C";
+            medida.color = chartColors[0];
+        } else if (nombreMedida === 'Humedad') {
+            medida.icono = humedadIcon;
+            medida.unidad = "%";
+            medida.color = chartColors[1];
+        } else if (nombreMedida === 'Presion' || nombreMedida === 'Presión atmosférica') {
+            // Manejar varias formas de escribir "Presión atmosférica"
+            medida.icono = presionIcon;
+            medida.unidad = "hPa";
+            medida.color = chartColors[2];
+        } else if (nombreMedida === 'Lluvia') {
+            medida.icono = lluviaIcon;
+            medida.unidad = "mm";
+            medida.color = chartColors[3];
+        }
+    };
+    
 
     const handleShowModal = (nombre, detalles, unidad) => {
         setTituloModal(`Detalle de ${nombre} por mes`);
@@ -151,6 +183,7 @@ function Medidas({ filtro }) {
         setUnidad(unidad);
         setShowModal(true);
     };
+
 
     const handleCloseModal = () => setShowModal(false);
 
@@ -186,7 +219,7 @@ function Medidas({ filtro }) {
                                 <h5 className="variable-title"><strong>{variable.nombre}</strong></h5>
                                 <p className="medida-variable"><strong>Medida: </strong>{variable.unidad}</p>
 
-                                {filtro.tipo === "mensual" ? (
+                                {["mensual", "rangoFechas", "mesAnio"].includes(filtro.tipo) ? (
                                     <Button
                                         className="btn btn-primary custom-button-filtro"
                                         onClick={() =>
@@ -201,32 +234,34 @@ function Medidas({ filtro }) {
                                     </Button>
                                 ) : (
                                     <div className="valor-variable">
-                                        {variable.valores.promedio !== null && (
+                                        {variable.valores.promedio !== undefined && variable.valores.promedio !== null && (
                                             <p>
                                                 <strong>Promedio:</strong>{" "}
                                                 {variable.valores.promedio.toFixed(2)} {variable.unidad}
                                             </p>
                                         )}
-                                        {variable.valores.max !== null && (
+                                        {variable.valores.max !== undefined && variable.valores.max !== null && (
                                             <p>
                                                 <strong>Máx:</strong> {variable.valores.max.toFixed(2)}{" "}
                                                 {variable.unidad}
                                             </p>
                                         )}
-                                        {variable.valores.min !== null && (
+                                        {variable.valores.min !== undefined && variable.valores.min !== null && (
                                             <p>
                                                 <strong>Mín:</strong> {variable.valores.min.toFixed(2)}{" "}
                                                 {variable.unidad}
                                             </p>
                                         )}
-                                        {variable.valores.suma !== null && (
+                                        {variable.valores.suma !== undefined && variable.valores.suma !== null && (
                                             <p>
                                                 <strong>Suma:</strong> {variable.valores.suma.toFixed(2)}{" "}
                                                 {variable.unidad}
                                             </p>
                                         )}
                                     </div>
+
                                 )}
+
                             </div>
                         </div>
                     </div>
@@ -243,18 +278,20 @@ function Medidas({ filtro }) {
                         {detalleMes.length > 0 ? (
                             detalleMes.map((detalle, index) => (
                                 <div key={index} className="row border-bottom py-2">
-                                    <div className="col-12 col-md-4"><strong>{detalle.mes}</strong></div>
+                                    <div className="col-12 col-md-4">
+                                        <strong>{detalle.mes || detalle.dia}</strong>
+                                    </div>
                                     <div className="col-12 col-md-8">
-                                        {detalle.promedio !== undefined && (
+                                        {detalle.promedio !== null && (
                                             <p><strong>Promedio:</strong> {detalle.promedio.toFixed(2)} {unidad}</p>
                                         )}
-                                        {detalle.max !== undefined && (
+                                        {detalle.max !== null && (
                                             <p><strong>Máx:</strong> {detalle.max.toFixed(2)} {unidad}</p>
                                         )}
-                                        {detalle.min !== undefined && (
+                                        {detalle.min !== null && (
                                             <p><strong>Mín:</strong> {detalle.min.toFixed(2)} {unidad}</p>
                                         )}
-                                        {detalle.suma !== undefined && (
+                                        {detalle.suma !== null && (
                                             <p><strong>Suma:</strong> {detalle.suma.toFixed(2)} {unidad}</p>
                                         )}
                                     </div>
@@ -264,7 +301,9 @@ function Medidas({ filtro }) {
                             <p>No hay datos disponibles para esta medida.</p>
                         )}
                     </div>
+
                 </Modal.Body>
+
                 <Modal.Footer style={{ background: 'var(--blue-unl)' }}>
                     <Button variant="btn btn-light" onClick={handleCloseModal}>Cerrar</Button>
                 </Modal.Footer>

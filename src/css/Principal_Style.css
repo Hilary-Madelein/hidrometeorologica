@@ -16,7 +16,7 @@
 .custom-container-filtro,
 .custom-container-graficas {
     border: 1px solid #f9f9fc;
-    background-color: #fff;
+    background-color: #f9f9fc;
     border-radius: 0.3rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
     width: 100%;

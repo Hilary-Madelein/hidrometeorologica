@@ -34,3 +34,13 @@
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2),
                 0 15px 50px rgba(0, 0, 0, 0.2);
 }
+
+.informacion-presentada  {
+    border: 1px solid #f9f9fc;
+    background-color: #f9f9fc;
+    border-radius: 0.3rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
