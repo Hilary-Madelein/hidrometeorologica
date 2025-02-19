@@ -1,4 +1,3 @@
-/* Contenedor principal que incluye el mapa y las estaciones */
 .mapa-con-estaciones-container {
     display: flex;
     flex-direction: row;
@@ -7,31 +6,18 @@
     overflow: hidden;
 }
 
-/* Sección del mapa */
 .mapa-section {
     width: 50%;
     height: 100%;
 }
 
-/* Sección de las estaciones */
 .estaciones-section {
     width: 50%;
     height: 100%;
     overflow-y: auto;
-    box-sizing: border-box;
-    padding: 0; /* Elimina el padding para que se una con el mapa */
+    padding: 0;
 }
 
-/* Contenedor de las tarjetas */
-.custom-container-cards {
-    background-color: #ffffff;
-    width: 100%;
-    height: auto;
-    margin: 0;
-    padding: 10px;
-}
-
-/* Título de las zonas de monitoreo */
 .zonas-monitoreo-titulo h2{
     background-color: #0C2840;
     color: white;
@@ -44,167 +30,39 @@
     box-sizing: border-box;
 }
 
-/* Ajuste para el título h2 dentro de la zona de monitoreo */
-.zonas-monitoreo-titulo h2 {
-    margin: 0;
-    font-size: 26px;
-    color: white;
-}
-
-/* Estilos para cada tarjeta de estación */
 .modern-card {
     width: 100%;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #feffff;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 5px auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px; /* Espacio entre tarjetas */
+    min-height: auto;
 }
+
 
 .modern-card:hover {
     transform: translateY(-5px);
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.card-img-top {
-    width: 100%;
-    height: 150px;
-    border-radius: 4px;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-/* Contenedor para el título y subtítulo */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-}
-
-.card-title {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-}
-
-.card-subtitle {
-    font-size: 0.8rem;
-    color: #666;
-}
-
-.card-price {
-    background-color: #007bff;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 0.9rem;
-}
-
-.card-description {
-    font-size: 0.9rem;
-    color: #777;
-    margin: 10px 0;
-}
-
-/* Botón de acción en la tarjeta */
-.btn-ver-estaciones {
-    background-color: #0C2840;
-    color: #ffffff;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: bold;
-    text-align: center;
-    transition: background-color 0.3s;
-    width: 100%;
-}
-
-.btn-ver-estaciones:hover {
-    background-color: #4259db;
-}
-
-/* Estilo del botón de regreso */
 .btn-back {
     position: absolute;
-    top: 40px;
-    background-color: #0C2840;
     color: white;
-    font-size: 20px;
-    padding: 10px;
-    border-radius: 25%;
-    border: none;
+    font-size: 30px;
     display: flex;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); 
-    z-index: 10; 
 }
 
 .btn-back:hover {
-    background-color: #93b7fa; 
-    transform: scale(1.1); 
+    background-color: #00a2c0; 
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); 
-}
-
-.btn-back:active {
-    transform: scale(0.95); 
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.section-tabs {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    padding: 10px 0;
-    margin-top: 50px;
-}
-
-.tab-button {
-    flex: 1; 
-    text-align: center;
-    padding: 12px 0;
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    border-radius: 5px 5px 0 0;
-    background-color: #dbdbdb;
-}
-
-/* Colores de fondo para cada sección cuando están activas */
-.tab-button.all.active {
-    background-color: #004c9e; /* Azul para "Todas" */
+    border-radius: 0;
     color: white;
-}
-
-.tab-button.meteorological.active {
-    background-color: #d40303; /* Rojo para "Meteorológicas" */
-    color: white;
-}
-
-.tab-button.hydrological.active {
-    background-color: #06a32b; /* Verde para "Hidrológicas" */
-    color: white;
-}
-
-.tab-button:hover {
-    background-color: #e0ebff;
-}
-
-.tab-button.active {
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
-    transform: translateY(-4px); 
 }
 
 .row.mt-4 {
@@ -224,63 +82,35 @@
     margin-bottom: 20px;
 }
 
-.card-custom {
-    width: 100%;
-    border: 1px solid #ececec;
-    border-radius: 8px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-    background-color: #ffffff;
-    transition: transform 0.2s, box-shadow 0.2s;
-    overflow: hidden;
-}
-
 .card-img-top {
     width: 100%;
-    height: 250px;
+    height: 280px;
     object-fit: cover;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
-/* Cuerpo de la card */
 .card-body {
-    padding: 20px;
+    padding: 15px;
     text-align: center;
 }
 
 .card-title {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #333;
-    margin-bottom: 8px;
 }
 
 .card-text {
     font-size: 1rem;
     color: #555;
     margin-bottom: 15px;
+    word-wrap: break-word; /* Permite que las palabras largas se ajusten */
+    white-space: normal; /* Asegura que el texto se envuelva correctamente */
 }
 
-/* Botón de acción en la card */
-.btn-ver-estaciones {
-    background-color: #0C2840;
-    color: #ffffff;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    width: 80%;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.btn-ver-estaciones:hover {
-    background-color: #4259db;
-    transform: translateY(-2px); 
-}
-
-/* Adaptación para pantallas pequeñas */
 @media (max-width: 768px) {
     .row.mt-4 .col-md-3, .row.mt-4 .col-sm-6 {
         flex: 0 0 100%; 
@@ -296,7 +126,7 @@
     .card-text {
         font-size: 0.9rem;
     }
-    .btn-ver-estaciones {
+    .btn-principal {
         font-size: 0.9rem;
         padding: 10px 15px;
     }
@@ -318,11 +148,6 @@
 
     .card-title {
         font-size: 0.95rem;
-    }
-
-    .btn-ver-estaciones {
-        font-size: 0.8rem;
-        padding: 8px;
     }
 
     .zonas-monitoreo-titulo {
@@ -352,7 +177,7 @@
         font-size: 20px;
     }
 
-    .btn-ver-estaciones {
+    .btn-principal {
         font-size: 0.85rem;
         padding: 8px;
     }
@@ -367,7 +192,7 @@
         font-size: 0.9rem;
     }
 
-    .btn-ver-estaciones {
+    .btn-principal {
         font-size: 0.8rem;
         padding: 6px;
     }
